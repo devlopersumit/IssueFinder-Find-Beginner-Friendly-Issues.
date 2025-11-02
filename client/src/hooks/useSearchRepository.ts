@@ -42,20 +42,22 @@ export function useSearchRepository(searchQuery: string | null): UseSearchReposi
       return
     }
 
+    const trimmedQuery = searchQuery.trim()
+
     async function searchRepository() {
       setIsLoading(true)
       setError(null)
       try {
         // Check if it's in owner/repo format
-        const ownerRepoMatch = searchQuery.trim().match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/)
+        const ownerRepoMatch = trimmedQuery.match(/^([a-zA-Z0-9._-]+)\/([a-zA-Z0-9._-]+)$/)
         
         let url: string
         if (ownerRepoMatch) {
           // Direct repository search
-          url = `https://api.github.com/search/repositories?q=${encodeURIComponent(searchQuery.trim())}+in:name&sort=stars&order=desc&per_page=10`
+          url = `https://api.github.com/search/repositories?q=${encodeURIComponent(trimmedQuery)}+in:name&sort=stars&order=desc&per_page=10`
         } else {
           // General repository search
-          url = `https://api.github.com/search/repositories?q=${encodeURIComponent(searchQuery.trim())}+in:name&sort=stars&order=desc&per_page=10`
+          url = `https://api.github.com/search/repositories?q=${encodeURIComponent(trimmedQuery)}+in:name&sort=stars&order=desc&per_page=10`
         }
 
         const response = await fetch(url, {
@@ -85,6 +87,7 @@ export function useSearchRepository(searchQuery: string | null): UseSearchReposi
     }, 500) // Debounce search
 
     return () => clearTimeout(timeoutId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery])
 
   return { results, isLoading, error }
