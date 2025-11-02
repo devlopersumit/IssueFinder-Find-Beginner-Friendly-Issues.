@@ -6,6 +6,7 @@ type FiltersPanelProps = {
   onToggleLabel: (label: string) => void
   selectedLanguage: string | null
   onChangeLanguage: (language: string | null) => void
+  showTags?: boolean
 }
 
 const LANGUAGES = [
@@ -32,7 +33,7 @@ const LANGUAGES = [
   { key: null as unknown as string, label: 'Any Language' }
 ]
 
-const FiltersPanel: React.FC<FiltersPanelProps> = ({ className = '', selectedLabels, onToggleLabel, selectedLanguage, onChangeLanguage }) => {
+const FiltersPanel: React.FC<FiltersPanelProps> = ({ className = '', selectedLabels, onToggleLabel, selectedLanguage, onChangeLanguage, showTags = true }) => {
   const [searchLang, setSearchLang] = React.useState('')
 
   const filteredLanguages = React.useMemo(() => {
@@ -47,28 +48,30 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({ className = '', selectedLab
       <div className="p-4">
         <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 uppercase tracking-wide">Filters</h2>
         <div className="space-y-5">
-          <div>
-            <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Tags</p>
-            <div className="flex flex-wrap gap-2">
-              {['enhancement', 'good first issue', 'help wanted'].map((l) => {
-                const active = selectedLabels.includes(l)
-                return (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => onToggleLabel(l)}
-                    className={`rounded px-3 py-1 text-xs font-medium ${
-                      active 
-                        ? 'bg-slate-700 dark:bg-slate-600 text-white' 
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
-                    }`}
-                  >
-                    #{l}
-                  </button>
-                )
-              })}
+          {showTags && (
+            <div>
+              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Tags</p>
+              <div className="flex flex-wrap gap-2">
+                {['enhancement', 'good first issue', 'help wanted'].map((l) => {
+                  const active = selectedLabels.includes(l)
+                  return (
+                    <button
+                      key={l}
+                      type="button"
+                      onClick={() => onToggleLabel(l)}
+                      className={`rounded px-3 py-1 text-xs font-medium ${
+                        active 
+                          ? 'bg-slate-700 dark:bg-slate-600 text-white' 
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
+                      }`}
+                    >
+                      #{l}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
           <div>
             <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Languages</p>
             <div className="mb-2">

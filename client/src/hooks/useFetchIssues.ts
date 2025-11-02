@@ -11,7 +11,7 @@ type GithubIssueItem = {
   created_at: string
 }
 
-type GithubSearchResponse = {
+type GithubSearchResponse = { 
   total_count: number
   incomplete_results: boolean
   items: GithubIssueItem[]
@@ -30,7 +30,6 @@ export function useFetchIssues(query: string, page: number = 1, perPage: number 
   const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    // Cancel any in-flight request when query changes or component unmounts
     if (abortRef.current) {
       abortRef.current.abort()
     }

@@ -9,8 +9,8 @@ const Hero: React.FC = () => {
             New to <span className="text-slate-700 dark:text-slate-300">Open Source</span>?
           </h2>
           <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto mb-6">
-            Find the most recent and unassigned GitHub issues here! IssueFinder helps you discover beginner-friendly issues 
-            filtered by your preferred programming language.
+            Find the most recent and unassigned GitHub issues and discover the best repositories for open source contribution! 
+            IssueFinder helps you find beginner-friendly issues and repositories filtered by your preferred programming language.
           </p>
           <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-2 bg-white dark:bg-gray-900 px-3 py-2 rounded border border-gray-300 dark:border-gray-700 transition-colors duration-200">
@@ -31,6 +31,12 @@ const Hero: React.FC = () => {
                 <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
               </svg>
               <span>20+ Languages</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white dark:bg-gray-900 px-3 py-2 rounded border border-gray-300 dark:border-gray-700 transition-colors duration-200">
+              <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+              <span>Best Repositories</span>
             </div>
           </div>
         </div>
