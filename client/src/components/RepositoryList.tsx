@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useFetchRepositories } from '../hooks/useFetchRepositories'
+import RepositoryModal from './RepositoryModal'
 
 type RepositoryListProps = {
   className?: string
@@ -9,6 +10,7 @@ type RepositoryListProps = {
 const RepositoryList: React.FC<RepositoryListProps> = ({ className = '', language }) => {
   const [page, setPage] = useState<number>(1)
   const [sort, setSort] = useState<'stars' | 'updated' | 'forks'>('stars')
+  const [selectedRepo, setSelectedRepo] = useState<string | null>(null)
   const perPage = 20
   const [items, setItems] = useState<any[]>([])
   const { data, isLoading, error } = useFetchRepositories(language, sort, page, perPage)
@@ -115,7 +117,8 @@ const RepositoryList: React.FC<RepositoryListProps> = ({ className = '', languag
             return (
               <article
                 key={repo.id}
-                className="p-4 border border-gray-300 dark:border-gray-700 rounded hover:border-slate-500 dark:hover:border-slate-500 bg-white dark:bg-gray-800 transition-colors duration-200"
+                className="p-4 border border-gray-300 dark:border-gray-700 rounded hover:border-slate-500 dark:hover:border-slate-500 bg-white dark:bg-gray-800 transition-colors duration-200 cursor-pointer"
+                onClick={() => setSelectedRepo(repo.full_name)}
               >
                 <div className="flex items-start gap-4">
                   <img
@@ -124,14 +127,25 @@ const RepositoryList: React.FC<RepositoryListProps> = ({ className = '', languag
                     className="h-10 w-10 rounded-full border border-gray-300 dark:border-gray-600"
                   />
                   <div className="flex-1 min-w-0">
-                    <a
-                      href={repo.html_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:underline"
-                    >
-                      {repo.full_name}
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
+                      >
+                        {repo.full_name}
+                      </div>
+                      <a
+                        href={repo.html_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                        aria-label="Open repository on GitHub"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    </div>
                     {repo.description && (
                       <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 line-clamp-2">{repo.description}</p>
                     )}
@@ -203,6 +217,7 @@ const RepositoryList: React.FC<RepositoryListProps> = ({ className = '', languag
           )}
         </div>
       </div>
+      <RepositoryModal repoFullName={selectedRepo} onClose={() => setSelectedRepo(null)} />
     </section>
   )
 }
