@@ -6,18 +6,18 @@ const Hero: React.FC = () => {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12">
         <div className="text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3">
-            New to <span className="text-slate-700 dark:text-slate-300">Open Source</span>?
+            Start Your <span className="text-slate-700 dark:text-slate-300">Open Source</span> Journey
           </h2>
           <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto mb-6">
-            Find the most recent and unassigned GitHub issues and discover the best repositories for open source contribution! 
-            IssueFinder helps you find beginner-friendly issues and repositories filtered by your preferred programming language.
+            Discover the best GitHub issues and repositories to contribute to. Whether you're a beginner or an experienced developer, 
+            IssueFinder helps you find the perfect opportunities filtered by category, language, and your interests.
           </p>
           <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-2 bg-white dark:bg-gray-900 px-3 py-2 rounded border border-gray-300 dark:border-gray-700 transition-colors duration-200">
               <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span>30+ Recent Issues</span>
+              <span>All Issue Types</span>
             </div>
             <div className="flex items-center gap-2 bg-white dark:bg-gray-900 px-3 py-2 rounded border border-gray-300 dark:border-gray-700 transition-colors duration-200">
               <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -36,7 +36,7 @@ const Hero: React.FC = () => {
               <svg className="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-              <span>Best Repositories</span>
+              <span>Curated Repositories</span>
             </div>
           </div>
         </div>
