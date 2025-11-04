@@ -5,6 +5,7 @@ import FiltersPanel from './components/FiltersPanel'
 import IssueList from './components/IssueList'
 import RepositoryList from './components/RepositoryList'
 import Footer from './components/Footer'
+import MobileCategoryTabs from './components/MobileCategoryTabs'
 
 type ViewMode = 'issues' | 'repositories'
 
@@ -76,6 +77,13 @@ const App: React.FC = () => {
       />
       <Hero />
       <main className="mx-auto max-w-7xl px-4 py-8">
+        {/* Mobile Category Tabs - Always visible on mobile */}
+        {viewMode === 'issues' && (
+          <MobileCategoryTabs
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+          />
+        )}
         <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex gap-2 border-b border-gray-300 dark:border-gray-600">
             <button
@@ -125,6 +133,7 @@ const App: React.FC = () => {
               showTags={viewMode === 'issues'}
               selectedCategories={selectedCategories}
               onToggleCategory={toggleCategory}
+              isMobile={true}
             />
           </div>
         )}

@@ -9,18 +9,19 @@ type FiltersPanelProps = {
   showTags?: boolean
   selectedCategories?: string[]
   onToggleCategory?: (category: string) => void
+  isMobile?: boolean
 }
 
 const ISSUE_CATEGORIES = [
   { key: 'all', label: 'All Issues', icon: '🔍' },
   { key: 'good first issue', label: 'Good First Issue', icon: '✨' },
-  { key: 'help wanted', label: 'Help Wanted', icon: '🆘' },
-  { key: 'bug', label: 'Bug', icon: '🐛' },
+  { key: 'help wanted', label: 'Help Wanted', icon: '🤝' },
+  { key: 'bug', label: 'Bug', icon: '⚠️' },
   { key: 'enhancement', label: 'Enhancement', icon: '⚡' },
   { key: 'feature', label: 'Feature', icon: '🚀' },
   { key: 'documentation', label: 'Documentation', icon: '📝' },
   { key: 'refactor', label: 'Refactor', icon: '♻️' },
-  { key: 'performance', label: 'Performance', icon: '⚡' },
+  { key: 'performance', label: 'Performance', icon: '⚙️' },
   { key: 'testing', label: 'Testing', icon: '🧪' },
   { key: 'question', label: 'Question', icon: '❓' },
 ]
@@ -57,7 +58,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
   onChangeLanguage, 
   showTags = true,
   selectedCategories = [],
-  onToggleCategory
+  onToggleCategory,
+  isMobile = false
 }) => {
   const [searchLang, setSearchLang] = React.useState('')
 
@@ -68,12 +70,27 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
     )
   }, [searchLang])
 
+  const handleCategoryToggle = (category: string) => {
+    if (!onToggleCategory) return
+    
+    if (category === 'all') {
+      // Clear all categories
+      selectedCategories.forEach(c => onToggleCategory(c))
+    } else {
+      // Toggle this category and remove 'all' if it was selected
+      if (selectedCategories.includes('all')) {
+        onToggleCategory('all')
+      }
+      onToggleCategory(category)
+    }
+  }
+
   return (
     <aside className={`bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded transition-colors duration-200 ${className}`}>
       <div className="p-4">
         <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-4 uppercase tracking-wide">Filters</h2>
         <div className="space-y-5">
-          {showTags && onToggleCategory && (
+          {showTags && onToggleCategory && !isMobile && (
             <div>
               <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Issue Categories</p>
               <div className="space-y-1 max-h-64 overflow-y-auto pr-1 custom-scrollbar">
@@ -83,18 +100,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
                     <button
                       key={cat.key}
                       type="button"
-                      onClick={() => {
-                        if (cat.key === 'all') {
-                          // Clear all categories
-                          selectedCategories.forEach(c => onToggleCategory(c))
-                        } else {
-                          // Toggle this category and remove 'all' if it was selected
-                          if (selectedCategories.includes('all')) {
-                            onToggleCategory('all')
-                          }
-                          onToggleCategory(cat.key)
-                        }
-                      }}
+                      onClick={() => handleCategoryToggle(cat.key)}
                       className={`w-full flex items-center gap-2 rounded px-3 py-2 text-xs font-medium text-left transition-colors ${
                         active 
                           ? 'bg-slate-700 dark:bg-slate-600 text-white' 

@@ -14,17 +14,17 @@ const DifficultyBadge: React.FC<DifficultyBadgeProps> = ({ difficulty, className
   const badgeConfig = {
     beginner: {
       label: 'Beginner',
-      icon: '🌱',
+      icon: '📘',
       colors: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700'
     },
     intermediate: {
       label: 'Intermediate',
-      icon: '⚡',
+      icon: '🔨',
       colors: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700'
     },
     advanced: {
       label: 'Advanced',
-      icon: '🔥',
+      icon: '⚡',
       colors: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700'
     }
   }
