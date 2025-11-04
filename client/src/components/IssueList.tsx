@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useFetchIssues } from '../hooks/useFetchIssues'
+import DifficultyBadge from './DifficultyBadge'
+import { detectDifficulty } from '../utils/difficulty'
 
 type IssueListProps = {
   className?: string
@@ -99,18 +101,22 @@ const IssueList: React.FC<IssueListProps> = ({ className = '', query }) => {
             }
             const issue = item
             const repo = issue.repository_url?.split('/').slice(-2).join('/')
+            const difficulty = detectDifficulty(issue.labels || [])
             return (
               <article key={issue.id} className="p-4 border border-gray-300 dark:border-gray-700 rounded hover:border-slate-500 dark:hover:border-slate-500 bg-white dark:bg-gray-800 transition-colors duration-200">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <a 
-                      href={issue.html_url} 
-                      target="_blank" 
-                      rel="noreferrer" 
-                      className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:underline line-clamp-2 block"
-                    >
-                      {issue.title}
-                    </a>
+                    <div className="flex items-start gap-2 mb-1.5">
+                      <a 
+                        href={issue.html_url} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 hover:underline line-clamp-2 block flex-1"
+                      >
+                        {issue.title}
+                      </a>
+                      <DifficultyBadge difficulty={difficulty} />
+                    </div>
                     <div className="mt-1.5 flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 flex-wrap">
                       <span className="font-mono">{repo}</span>
                       <span>•</span>
