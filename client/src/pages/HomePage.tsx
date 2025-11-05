@@ -6,7 +6,8 @@ import RepositoryList from '../components/RepositoryList'
 import MobileCategoryTabs from '../components/MobileCategoryTabs'
 import { Link } from 'react-router-dom'
 import { useSearch } from '../contexts/SearchContext'
-import { NaturalLanguage, getBrowserLanguage } from '../utils/languageDetection'
+import type { NaturalLanguage } from '../utils/languageDetection'
+import { getBrowserLanguage } from '../utils/languageDetection'
 
 type ViewMode = 'issues' | 'repositories'
 
@@ -19,13 +20,10 @@ const HomePage: React.FC = () => {
   const [selectedNaturalLanguages, setSelectedNaturalLanguages] = useState<NaturalLanguage[]>([])
   const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false)
 
-  // Auto-detect browser language and set as default filter
+  // Auto-detect browser language and apply filter automatically (silently)
   useEffect(() => {
     const browserLang = getBrowserLanguage()
-    // Only auto-select if no languages are selected yet (first visit)
-    if (selectedNaturalLanguages.length === 0) {
-      setSelectedNaturalLanguages([browserLang])
-    }
+    setSelectedNaturalLanguages([browserLang])
   }, []) // Run only once on mount
 
   const toggleLabel = (label: string) => {
@@ -44,14 +42,6 @@ const HomePage: React.FC = () => {
     })
   }
 
-  const toggleNaturalLanguage = (language: NaturalLanguage) => {
-    setSelectedNaturalLanguages((prev) => {
-      if (prev.includes(language)) {
-        return prev.filter((l) => l !== language)
-      }
-      return [...prev, language]
-    })
-  }
 
   const query = useMemo(() => {
     const parts: string[] = []
@@ -158,8 +148,6 @@ const HomePage: React.FC = () => {
               selectedCategories={selectedCategories}
               onToggleCategory={toggleCategory}
               isMobile={true}
-              selectedNaturalLanguages={selectedNaturalLanguages}
-              onToggleNaturalLanguage={toggleNaturalLanguage}
             />
           </div>
         )}
@@ -174,8 +162,6 @@ const HomePage: React.FC = () => {
                 onChangeLanguage={setSelectedLanguage}
                 selectedCategories={selectedCategories}
                 onToggleCategory={toggleCategory}
-                selectedNaturalLanguages={selectedNaturalLanguages}
-                onToggleNaturalLanguage={toggleNaturalLanguage}
               />
             </div>
           )}
@@ -188,8 +174,6 @@ const HomePage: React.FC = () => {
                 selectedLanguage={selectedLanguage}
                 onChangeLanguage={setSelectedLanguage}
                 showTags={false}
-                selectedNaturalLanguages={selectedNaturalLanguages}
-                onToggleNaturalLanguage={toggleNaturalLanguage}
               />
             </div>
           )}

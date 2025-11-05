@@ -1,5 +1,4 @@
 import React from 'react'
-import { NaturalLanguage, LANGUAGE_NAMES } from '../utils/languageDetection'
 
 type FiltersPanelProps = {
   className?: string
@@ -11,8 +10,6 @@ type FiltersPanelProps = {
   selectedCategories?: string[]
   onToggleCategory?: (category: string) => void
   isMobile?: boolean
-  selectedNaturalLanguages?: NaturalLanguage[]
-  onToggleNaturalLanguage?: (language: NaturalLanguage) => void
 }
 
 const ISSUE_CATEGORIES = [
@@ -53,21 +50,6 @@ const LANGUAGES = [
   { key: null as unknown as string, label: 'Any Language' }
 ]
 
-const NATURAL_LANGUAGES: { key: NaturalLanguage; label: string }[] = [
-  { key: 'en', label: LANGUAGE_NAMES.en },
-  { key: 'zh', label: LANGUAGE_NAMES.zh },
-  { key: 'ja', label: LANGUAGE_NAMES.ja },
-  { key: 'ko', label: LANGUAGE_NAMES.ko },
-  { key: 'es', label: LANGUAGE_NAMES.es },
-  { key: 'fr', label: LANGUAGE_NAMES.fr },
-  { key: 'de', label: LANGUAGE_NAMES.de },
-  { key: 'pt', label: LANGUAGE_NAMES.pt },
-  { key: 'ru', label: LANGUAGE_NAMES.ru },
-  { key: 'ar', label: LANGUAGE_NAMES.ar },
-  { key: 'hi', label: LANGUAGE_NAMES.hi },
-  { key: 'other', label: LANGUAGE_NAMES.other }
-]
-
 const FiltersPanel: React.FC<FiltersPanelProps> = ({ 
   className = '', 
   selectedLabels, 
@@ -77,12 +59,9 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
   showTags = true,
   selectedCategories = [],
   onToggleCategory,
-  isMobile = false,
-  selectedNaturalLanguages = [],
-  onToggleNaturalLanguage
+  isMobile = false
 }) => {
   const [searchLang, setSearchLang] = React.useState('')
-  const [searchNaturalLang, setSearchNaturalLang] = React.useState('')
 
   const filteredLanguages = React.useMemo(() => {
     if (!searchLang) return LANGUAGES
@@ -90,13 +69,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
       lang.label.toLowerCase().includes(searchLang.toLowerCase())
     )
   }, [searchLang])
-
-  const filteredNaturalLanguages = React.useMemo(() => {
-    if (!searchNaturalLang) return NATURAL_LANGUAGES
-    return NATURAL_LANGUAGES.filter(lang => 
-      lang.label.toLowerCase().includes(searchNaturalLang.toLowerCase())
-    )
-  }, [searchNaturalLang])
 
   const handleCategoryToggle = (category: string) => {
     if (!onToggleCategory) return
@@ -201,46 +173,6 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
               ))}
             </div>
           </div>
-          {onToggleNaturalLanguage && (
-            <div>
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Issue Language</p>
-              <p className="text-xs text-gray-500 dark:text-gray-500 mb-2 italic">Filter by the language issues are written in</p>
-              <div className="mb-2">
-                <input
-                  type="text"
-                  placeholder="Search language..."
-                  value={searchNaturalLang}
-                  onChange={(e) => setSearchNaturalLang(e.target.value)}
-                  className="w-full rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500"
-                />
-              </div>
-              <div className="max-h-64 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
-                {filteredNaturalLanguages.map((lang) => {
-                  const isSelected = selectedNaturalLanguages.includes(lang.key)
-                  return (
-                    <label 
-                      key={lang.key}
-                      className={`flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer ${
-                        isSelected
-                          ? 'bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600' 
-                          : 'hover:bg-gray-50 dark:hover:bg-gray-800'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        className="h-3.5 w-3.5 text-slate-700 dark:text-slate-400"
-                        checked={isSelected}
-                        onChange={() => onToggleNaturalLanguage(lang.key)}
-                      />
-                      <span className={`text-sm ${isSelected ? 'font-medium text-slate-900 dark:text-slate-200' : 'text-gray-700 dark:text-gray-300'}`}>
-                        {lang.label}
-                      </span>
-                    </label>
-                  )
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </aside>

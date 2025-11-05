@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useFetchIssues } from '../hooks/useFetchIssues'
 import DifficultyBadge from './DifficultyBadge'
 import { detectDifficulty } from '../utils/difficulty'
 import type { NaturalLanguage } from '../utils/languageDetection'
 import { filterByLanguage } from '../utils/languageDetection'
+import { fetchRepositoryLanguages, getLanguageColor } from '../utils/repoLanguages'
 
 type IssueListProps = {
   className?: string
@@ -15,6 +16,8 @@ const IssueList: React.FC<IssueListProps> = ({ className = '', query, naturalLan
   const [page, setPage] = useState<number>(1)
   const perPage = 20
   const [items, setItems] = useState<any[]>([])
+  const [repoLanguages, setRepoLanguages] = useState<Record<string, string[]>>({})
+  const languagesFetchedRef = useRef<Set<string>>(new Set())
   const { data, isLoading, error } = useFetchIssues(query, page, perPage)
 
   useEffect(() => {
@@ -32,6 +35,25 @@ const IssueList: React.FC<IssueListProps> = ({ className = '', query, naturalLan
         })
         return merged
       })
+      
+      // Fetch languages for new repositories
+      const newRepos = data.items
+        .filter(item => item.repository_url && !languagesFetchedRef.current.has(item.repository_url))
+        .map(item => item.repository_url)
+      
+      if (newRepos.length > 0) {
+        // Fetch languages for unique repos
+        const uniqueRepos = Array.from(new Set(newRepos))
+        uniqueRepos.forEach(async (repoUrl) => {
+          if (!languagesFetchedRef.current.has(repoUrl)) {
+            languagesFetchedRef.current.add(repoUrl)
+            const languages = await fetchRepositoryLanguages(repoUrl)
+            if (languages.length > 0) {
+              setRepoLanguages(prev => ({ ...prev, [repoUrl]: languages }))
+            }
+          }
+        })
+      }
     }
   }, [data])
 
@@ -308,6 +330,24 @@ const IssueList: React.FC<IssueListProps> = ({ className = '', query, naturalLan
                       <span>•</span>
                       <span>{formatDate(issue.created_at)}</span>
                     </div>
+                    {repoLanguages[issue.repository_url] && repoLanguages[issue.repository_url].length > 0 && (
+                      <div className="mt-2 flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">Languages:</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {repoLanguages[issue.repository_url].slice(0, 3).map((lang, idx) => (
+                            <span
+                              key={`${issue.id}-lang-${idx}`}
+                              className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium shadow-sm ${getLanguageColor(lang)}`}
+                            >
+                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                              </svg>
+                              {lang}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     {issue.labels && issue.labels.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {issue.labels.slice(0, 4).map((l: any, i: number) => {

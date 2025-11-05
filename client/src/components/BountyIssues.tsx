@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react'
 import DifficultyBadge from './DifficultyBadge'
 import { detectDifficulty } from '../utils/difficulty'
 import type { NaturalLanguage } from '../utils/languageDetection'
-import { getBrowserLanguage, filterByLanguage, LANGUAGE_NAMES } from '../utils/languageDetection'
+import { getBrowserLanguage, filterByLanguage } from '../utils/languageDetection'
 
 type BountyIssuesProps = {
   className?: string
@@ -1150,43 +1150,6 @@ const BountyIssues: React.FC<BountyIssuesProps> = ({ className = '' }) => {
             )}
           </div>
         </div>
-        
-        {/* Language Filter */}
-        {!isLoading && items.length > 0 && (
-          <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Issue Language:</p>
-            <div className="flex flex-wrap gap-2">
-              {(['en', 'zh', 'ja', 'ko', 'es', 'fr', 'de', 'pt', 'ru', 'ar', 'hi', 'other'] as NaturalLanguage[]).map((lang) => {
-                const isSelected = selectedNaturalLanguages.includes(lang)
-                return (
-                  <button
-                    key={lang}
-                    type="button"
-                    onClick={() => {
-                      setSelectedNaturalLanguages(prev => 
-                        prev.includes(lang) 
-                          ? prev.filter(l => l !== lang)
-                          : [...prev, lang]
-                      )
-                    }}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors ${
-                      isSelected
-                        ? 'bg-amber-500 dark:bg-amber-600 text-white border border-amber-600 dark:border-amber-700'
-                        : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    {LANGUAGE_NAMES[lang]}
-                  </button>
-                )
-              })}
-            </div>
-            {selectedNaturalLanguages.length > 0 && (
-              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                Showing {filteredItems.length} of {items.length} issues
-              </p>
-            )}
-          </div>
-        )}
         
         {items.length === 0 && !isLoading && error && (
           <div className="text-center py-10 border border-gray-200 dark:border-gray-700 rounded-lg">
