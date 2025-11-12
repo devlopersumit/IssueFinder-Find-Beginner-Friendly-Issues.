@@ -4,7 +4,7 @@ import DifficultyBadge from './DifficultyBadge'
 import { detectDifficulty } from '../utils/difficulty'
 import type { NaturalLanguage } from '../utils/languageDetection'
 import { filterByLanguage } from '../utils/languageDetection'
-import { fetchRepositoryLanguages, getLanguageColor } from '../utils/repoLanguages'
+import { fetchRepositoryLanguages } from '../utils/repoLanguages'
 
 type IssueListProps = {
   className?: string
@@ -180,56 +180,6 @@ const IssueList: React.FC<IssueListProps> = ({ className = '', query, naturalLan
     return null
   }
 
-  const getIssueIcon = (labels: Array<{ name?: string; color?: string }>) => {
-    if (!labels || labels.length === 0) {
-      return (
-        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-        </svg>
-      )
-    }
-
-    const labelNames = labels.map(l => l.name?.toLowerCase() || '')
-    
-    if (labelNames.some(l => l.includes('bug') || l.includes('error'))) {
-      return (
-        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-        </svg>
-      )
-    }
-    
-    if (labelNames.some(l => l.includes('feature') || l.includes('enhancement'))) {
-      return (
-        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      )
-    }
-    
-    if (labelNames.some(l => l.includes('question') || l.includes('discussion'))) {
-      return (
-        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-        </svg>
-      )
-    }
-    
-    if (labelNames.some(l => l.includes('good first issue') || l.includes('beginner'))) {
-      return (
-        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-        </svg>
-      )
-    }
-    
-    return (
-      <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-      </svg>
-    )
-  }
-
   const shouldShowSkeleton = displayItems.length === 0 && isLoading
 
   return (
@@ -306,7 +256,6 @@ const IssueList: React.FC<IssueListProps> = ({ className = '', query, naturalLan
             : displayItems.map((issue: any) => {
                 const repo = issue.repository_url?.split('/').slice(-2).join('/')
                 const difficulty = detectDifficulty(issue.labels || [])
-                const mainIcon = getIssueIcon(issue.labels || [])
                 const repoLangs = repoLanguages[issue.repository_url] || []
                 const primaryLanguage = repoLangs.length > 0 ? repoLangs[0] : null
 
