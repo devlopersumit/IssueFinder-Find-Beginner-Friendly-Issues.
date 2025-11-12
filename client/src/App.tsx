@@ -5,6 +5,7 @@ import Footer from './components/Footer'
 import HomePage from './pages/HomePage'
 import BountyIssuesPage from './pages/BountyIssuesPage'
 import SearchResultsPage from './pages/SearchResultsPage'
+import RepositoriesPage from './pages/RepositoriesPage'
 import { useSearch } from './contexts/SearchContext'
 
 const AppContent: React.FC = () => {
@@ -31,6 +32,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/bounty" element={<BountyIssuesPage />} />
         <Route path="/search" element={<SearchResultsPage />} />
+        <Route path="/repositories" element={<RepositoriesPage />} />
       </Routes>
       <Footer
         githubUrl="https://github.com/devlopersumit"
