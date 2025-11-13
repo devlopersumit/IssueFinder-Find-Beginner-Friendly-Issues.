@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import BountyIssues from '../components/BountyIssues'
+import FiltersPanel from '../components/FiltersPanel'
 import { useSearch } from '../contexts/SearchContext'
+import { useFilterPreferences } from '../contexts/FilterPreferencesContext'
 
 const BountyIssuesPage: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0)
+  const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false)
   const { submittedSearch } = useSearch()
+  const { 
+    preferences,
+    updateCurrency,
+    updateLocation
+  } = useFilterPreferences()
+  
+  // Get filters from preferences
+  const currencyFilter = preferences.currency
+  const locationFilter = preferences.location
 
   // Force remount when component mounts
   useEffect(() => {
@@ -46,8 +58,63 @@ const BountyIssuesPage: React.FC = () => {
           Back to Home
         </Link>
       </div>
-      {/* Key ensures component remounts and fetches fresh data */}
-      <BountyIssues key={`bounty-${refreshKey}`} />
+
+      <div className="mb-4 md:hidden">
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+          onClick={() => setShowMobileFilters((v) => !v)}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          {showMobileFilters ? 'Hide Filters' : 'Show Filters'}
+        </button>
+      </div>
+
+      {showMobileFilters && (
+        <div className="md:hidden mb-4">
+          <FiltersPanel
+            className="rounded-md"
+            selectedLabels={[]}
+            onToggleLabel={() => {}}
+            selectedLanguage={null}
+            onChangeLanguage={() => {}}
+            showTags={false}
+            selectedLocation={locationFilter}
+            onChangeLocation={updateLocation}
+            selectedCurrency={currencyFilter}
+            onChangeCurrency={updateCurrency}
+            showCurrencyFilter={true}
+          />
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+        <div className="hidden md:block md:col-span-3">
+          <FiltersPanel
+            className="rounded-md md:sticky md:top-4"
+            selectedLabels={[]}
+            onToggleLabel={() => {}}
+            selectedLanguage={null}
+            onChangeLanguage={() => {}}
+            showTags={false}
+            selectedLocation={locationFilter}
+            onChangeLocation={updateLocation}
+            selectedCurrency={currencyFilter}
+            onChangeCurrency={updateCurrency}
+            showCurrencyFilter={true}
+          />
+        </div>
+        <div className="md:col-span-9">
+          {/* Key ensures component remounts and fetches fresh data */}
+          <BountyIssues 
+            key={`bounty-${refreshKey}`} 
+            currencyFilter={currencyFilter}
+            locationFilter={locationFilter}
+          />
+        </div>
+      </div>
     </main>
   )
 }

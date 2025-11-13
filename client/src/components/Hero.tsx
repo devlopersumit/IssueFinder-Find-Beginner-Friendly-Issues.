@@ -32,7 +32,7 @@ const highlights: Highlight[] = [
 
 const Hero: React.FC = () => {
   return (
-    <section className="relative overflow-hidden border-b border-gray-200 dark:border-gray-800 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
+    <section className="relative overflow-hidden border-b border-gray-200 dark:border-gray-800 bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors duration-300">
       <div className="absolute -top-24 right-[-10%] h-64 w-64 rounded-full bg-slate-200/50 blur-3xl dark:bg-slate-600/10" aria-hidden="true" />
       <div className="absolute -bottom-16 left-[-5%] h-72 w-72 rounded-full bg-sky-200/40 blur-3xl dark:bg-sky-500/10" aria-hidden="true" />
 
@@ -54,12 +54,12 @@ const Hero: React.FC = () => {
             </div>
 
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-              <a
-                href="#catalog"
+              <Link
+                to="/home"
                 className="inline-flex items-center justify-center rounded-lg bg-slate-900 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-slate-900/10 transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 dark:bg-slate-100 dark:text-gray-900 dark:hover:bg-slate-200"
               >
                 Explore the catalog
-              </a>
+              </Link>
               <Link
                 to="/bounty"
                 className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-6 py-3 text-base font-semibold text-slate-800 transition-colors duration-200 hover:border-slate-400 hover:text-slate-900 dark:border-gray-700 dark:text-slate-200 dark:hover:border-gray-500 dark:hover:text-white"
@@ -77,7 +77,7 @@ const Hero: React.FC = () => {
           </div>
 
           <div className="relative">
-            <div className="rounded-2xl border border-white/80 bg-white/70 p-6 shadow-xl shadow-slate-200/50 backdrop-blur dark:border-gray-700/60 dark:bg-gray-900/60 dark:shadow-black/20">
+            <div className="rounded-2xl border border-white/80 bg-white/70 p-6 shadow-xl shadow-slate-200/50 backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-900/60 dark:shadow-black/20">
               <div className="mb-6">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Why developers choose IssueFinder</p>
                 <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-slate-100">Stay focused on shipping</h2>

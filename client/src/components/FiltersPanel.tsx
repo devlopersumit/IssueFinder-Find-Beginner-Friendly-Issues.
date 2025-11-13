@@ -1,4 +1,8 @@
 import React, { useState } from 'react'
+import { POPULAR_COUNTRIES } from '../utils/locationDetection'
+import { POPULAR_CURRENCIES } from '../utils/currencyDetection'
+import type { LocationFilter } from '../utils/locationDetection'
+import type { Currency } from '../utils/currencyDetection'
 
 type FiltersPanelProps = {
   className?: string
@@ -22,6 +26,15 @@ type FiltersPanelProps = {
   onChangeLastActivity?: (activity: string | null) => void
   selectedLicense?: string | null
   onChangeLicense?: (license: string | null) => void
+  
+  // Location filter
+  selectedLocation?: LocationFilter | null
+  onChangeLocation?: (location: LocationFilter | null) => void
+  
+  // Currency filter (for bounties)
+  selectedCurrency?: Currency | null
+  onChangeCurrency?: (currency: Currency | null) => void
+  showCurrencyFilter?: boolean
 }
 
 // Simplified categories 
@@ -128,6 +141,11 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
   onChangeLastActivity,
   selectedLicense = null,
   onChangeLicense,
+  selectedLocation = null,
+  onChangeLocation,
+  selectedCurrency = null,
+  onChangeCurrency,
+  showCurrencyFilter = false,
 }) => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     difficulty: true,
@@ -138,6 +156,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
     activity: false,
     tags: true,
     license: false,
+    location: false,
+    currency: false,
   })
 
   const toggleSection = (section: string) => {
@@ -174,6 +194,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
     if (onChangeFramework) onChangeFramework(null)
     if (onChangeLastActivity) onChangeLastActivity(null)
     if (onChangeLicense) onChangeLicense(null)
+    if (onChangeLocation) onChangeLocation(null)
+    if (onChangeCurrency) onChangeCurrency(null)
     onChangeLanguage(null)
     if (onToggleCategory) {
       selectedCategories.forEach(c => onToggleCategory(c))
@@ -183,6 +205,27 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
     }
   }
 
+  const handleLocationChange = (countryCode: string) => {
+    if (!onChangeLocation) return
+    
+    if (countryCode === '') {
+      onChangeLocation(null)
+    } else {
+      const country = POPULAR_COUNTRIES.find(c => c.code === countryCode)
+      if (country) {
+        onChangeLocation({
+          country: country.name,
+          countryCode: country.code
+        })
+      }
+    }
+  }
+
+  const handleCurrencyChange = (currency: Currency | null) => {
+    if (!onChangeCurrency) return
+    onChangeCurrency(currency)
+  }
+
   const hasActiveFilters =
     !!selectedDifficulty ||
     !!selectedType ||
@@ -190,11 +233,13 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
     !!selectedLastActivity ||
     !!selectedLanguage ||
     (!!onChangeLicense && !!selectedLicense) ||
+    (!!onChangeLocation && !!selectedLocation) ||
+    (!!onChangeCurrency && !!selectedCurrency) ||
     (selectedCategories && selectedCategories.length > 0 && !selectedCategories.includes('all')) ||
     (selectedLabels && selectedLabels.length > 0)
 
   return (
-    <aside className={`rounded-2xl border border-slate-200 bg-white/95 shadow-sm transition-colors duration-200 dark:border-gray-700 dark:bg-gray-900 ${className}`}>
+    <aside className={`rounded-2xl border border-slate-200 bg-white/95 shadow-xs transition-colors duration-200 dark:border-gray-700 dark:bg-gray-900 ${className}`}>
       <div className="p-5 sm:p-6">
         <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-gray-900 dark:text-gray-100">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,7 +284,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
                         onClick={() => onToggleLabel(tag.key)}
                         className={`w-full rounded-lg border px-3 py-2 text-left transition ${
                           active
-                            ? 'border-slate-600 bg-slate-900 text-white shadow-sm dark:border-slate-500 dark:bg-slate-700'
+                            ? 'border-slate-600 bg-slate-900 text-white shadow-xs dark:border-slate-500 dark:bg-slate-700'
                             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-100 dark:border-gray-700 dark:bg-gray-900 dark:text-slate-300 dark:hover:border-gray-600 dark:hover:bg-gray-800'
                         }`}
                       >
@@ -285,7 +330,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
                       onClick={() => onChangeDifficulty(opt.key ?? null)}
                       className={`rounded-md border px-3 py-2 text-sm font-medium transition ${
                         (selectedDifficulty ?? '') === (opt.key ?? '')
-                          ? `${getDifficultyColor(opt.key)} shadow-sm`
+                          ? `${getDifficultyColor(opt.key)} shadow-xs`
                           : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-slate-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-slate-500'
                       }`}
                     >
@@ -388,51 +433,53 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
             </div>
           )}
 
-          {/* Language Filter */}
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-            <button
-              type="button"
-              onClick={() => toggleSection('language')}
-              className="flex w-full items-center justify-between text-sm font-semibold text-slate-800 hover:text-slate-900 dark:text-slate-100 dark:hover:text-slate-200"
-            >
-              <span className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-                Language
-              </span>
-              <svg 
-                className={`w-4 h-4 transition-transform ${expandedSections.language ? 'rotate-180' : ''}`}
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
+          {/* Language Filter - Only show in issues section, not in bounties */}
+          {showTags && (
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-xs dark:border-gray-700 dark:bg-gray-900">
+              <button
+                type="button"
+                onClick={() => toggleSection('language')}
+                className="flex w-full items-center justify-between text-sm font-semibold text-slate-800 hover:text-slate-900 dark:text-slate-100 dark:hover:text-slate-200"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            {expandedSections.language && (
-              <div className="mt-3 grid max-h-48 grid-cols-2 gap-2 overflow-y-auto pr-1 custom-scrollbar">
-                {POPULAR_LANGUAGES.map((opt) => (
-                  <button
-                    key={String(opt.key)}
-                    type="button"
-                    onClick={() => onChangeLanguage(opt.key ?? null)}
-                    className={`rounded-md border px-3 py-1.5 text-xs font-medium transition text-left ${
-                      (selectedLanguage ?? '') === (opt.key ?? '')
-                        ? 'border-slate-600 bg-slate-700 text-white dark:border-slate-500 dark:bg-slate-600'
-                        : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-slate-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-slate-500'
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  Language
+                </span>
+                <svg 
+                  className={`w-4 h-4 transition-transform ${expandedSections.language ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {expandedSections.language && (
+                <div className="mt-3 grid max-h-48 grid-cols-2 gap-2 overflow-y-auto pr-1 custom-scrollbar">
+                  {POPULAR_LANGUAGES.map((opt) => (
+                    <button
+                      key={String(opt.key)}
+                      type="button"
+                      onClick={() => onChangeLanguage(opt.key ?? null)}
+                      className={`rounded-md border px-3 py-1.5 text-xs font-medium transition text-left ${
+                        (selectedLanguage ?? '') === (opt.key ?? '')
+                          ? 'border-slate-600 bg-slate-700 text-white dark:border-slate-500 dark:bg-slate-600'
+                          : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-slate-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-slate-500'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* License Filter */}
           {onChangeLicense && (
-            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-xs dark:border-gray-700 dark:bg-gray-900">
               <button
                 type="button"
                 onClick={() => toggleSection('license')}
@@ -462,7 +509,7 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
                       onClick={() => onChangeLicense(opt.key ?? null)}
                       className={`flex items-center justify-between rounded-md border px-3 py-1.5 text-xs font-medium transition ${
                         (selectedLicense ?? '') === (opt.key ?? '')
-                          ? 'border-slate-600 bg-slate-900 text-white shadow-sm dark:border-slate-500 dark:bg-slate-700'
+                          ? 'border-slate-600 bg-slate-900 text-white shadow-xs dark:border-slate-500 dark:bg-slate-700'
                           : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-100 dark:border-gray-700 dark:bg-gray-900 dark:text-slate-300 dark:hover:border-gray-600 dark:hover:bg-gray-800'
                       }`}
                     >
@@ -567,12 +614,127 @@ const FiltersPanel: React.FC<FiltersPanelProps> = ({
             </div>
           )}
 
+          {/* Location Filter */}
+          {onChangeLocation && (
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-xs dark:border-gray-700 dark:bg-gray-900">
+              <button
+                type="button"
+                onClick={() => toggleSection('location')}
+                className="flex w-full items-center justify-between text-sm font-semibold text-slate-800 hover:text-slate-900 dark:text-slate-100 dark:hover:text-slate-200"
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Location
+                  {selectedLocation && (
+                    <span className="ml-2 inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300">
+                      {selectedLocation.country}
+                    </span>
+                  )}
+                </span>
+                <svg 
+                  className={`w-4 h-4 transition-transform ${expandedSections.location ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {expandedSections.location && (
+                <div className="mt-3 max-h-48 space-y-1 overflow-y-auto pr-1 custom-scrollbar">
+                  {POPULAR_COUNTRIES.map((country) => {
+                    const isSelected = selectedLocation?.countryCode === country.code
+                    return (
+                      <button
+                        key={country.code || 'any'}
+                        type="button"
+                        onClick={() => handleLocationChange(country.code)}
+                        className={`w-full rounded-md border px-3 py-1.5 text-xs font-medium transition text-left ${
+                          isSelected
+                            ? 'border-slate-600 bg-slate-700 text-white dark:border-slate-500 dark:bg-slate-600'
+                            : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-slate-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-slate-500'
+                        }`}
+                      >
+                        {country.name}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Currency Filter (for bounties) */}
+          {showCurrencyFilter && onChangeCurrency && (
+            <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-xs dark:border-gray-700 dark:bg-gray-900">
+              <button
+                type="button"
+                onClick={() => toggleSection('currency')}
+                className="flex w-full items-center justify-between text-sm font-semibold text-slate-800 hover:text-slate-900 dark:text-slate-100 dark:hover:text-slate-200"
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Currency
+                  {selectedCurrency && (
+                    <span className="ml-2 inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-300">
+                      {selectedCurrency}
+                    </span>
+                  )}
+                </span>
+                <svg 
+                  className={`w-4 h-4 transition-transform ${expandedSections.currency ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {expandedSections.currency && (
+                <div className="mt-3 max-h-48 space-y-1 overflow-y-auto pr-1 custom-scrollbar">
+                  <button
+                    type="button"
+                    onClick={() => handleCurrencyChange(null)}
+                    className={`w-full rounded-md border px-3 py-1.5 text-xs font-medium transition text-left ${
+                      !selectedCurrency
+                        ? 'border-slate-600 bg-slate-700 text-white dark:border-slate-500 dark:bg-slate-600'
+                        : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-slate-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-slate-500'
+                    }`}
+                  >
+                    Any Currency
+                  </button>
+                  {POPULAR_CURRENCIES.map((currency) => {
+                    const isSelected = selectedCurrency === currency.code
+                    return (
+                      <button
+                        key={currency.code}
+                        type="button"
+                        onClick={() => handleCurrencyChange(currency.code)}
+                        className={`w-full rounded-md border px-3 py-1.5 text-xs font-medium transition text-left ${
+                          isSelected
+                            ? 'border-slate-600 bg-slate-700 text-white dark:border-slate-500 dark:bg-slate-600'
+                            : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-slate-300 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-slate-500'
+                        }`}
+                      >
+                        {currency.name}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Clear Filters Button */}
           {hasActiveFilters && (
             <button
               type="button"
               onClick={handleClearFilters}
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-200 dark:hover:border-gray-600 dark:hover:text-white"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-slate-200 dark:border-gray-700 dark:bg-gray-800 dark:text-slate-200 dark:hover:border-gray-600 dark:hover:text-white"
             >
               Clear all filters
             </button>

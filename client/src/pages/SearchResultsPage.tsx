@@ -1,21 +1,35 @@
 import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSearch } from '../contexts/SearchContext'
+import { useFilterPreferences } from '../contexts/FilterPreferencesContext'
 import IssueList from '../components/IssueList'
 import FiltersPanel from '../components/FiltersPanel'
 import { buildGitHubQuery } from '../utils/queryBuilder'
 
 const SearchResultsPage: React.FC = () => {
   const { submittedSearch, clearSearch } = useSearch()
+  const {
+    preferences,
+    updateSelectedLanguage,
+    updateSelectedDifficulty,
+    updateSelectedType,
+    updateSelectedFramework,
+    updateSelectedLastActivity,
+    updateLocation
+  } = useFilterPreferences()
+  
   const [selectedLabels, setSelectedLabels] = useState<string[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null)
   const [showMobileFilters, setShowMobileFilters] = useState<boolean>(false)
-  // Advanced filters
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null)
-  const [selectedType, setSelectedType] = useState<string | null>(null)
-  const [selectedFramework, setSelectedFramework] = useState<string | null>(null)
-  const [selectedLastActivity, setSelectedLastActivity] = useState<string | null>(null)
+  
+  // Use preferences from context
+  const selectedLanguage = preferences.selectedLanguage
+  const selectedLocation = preferences.location
+  const selectedNaturalLanguages = preferences.naturalLanguages
+  const selectedDifficulty = preferences.selectedDifficulty
+  const selectedType = preferences.selectedType
+  const selectedFramework = preferences.selectedFramework
+  const selectedLastActivity = preferences.selectedLastActivity
 
   const toggleLabel = (label: string) => {
     setSelectedLabels((prev) => (prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]))
@@ -81,7 +95,7 @@ const SearchResultsPage: React.FC = () => {
       <div className="mb-4 md:hidden">
         <button
           type="button"
-          className="inline-flex items-center gap-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+          className="inline-flex items-center gap-2 rounded-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
           onClick={() => setShowMobileFilters((v) => !v)}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,19 +112,21 @@ const SearchResultsPage: React.FC = () => {
             selectedLabels={selectedLabels}
             onToggleLabel={toggleLabel}
             selectedLanguage={selectedLanguage}
-            onChangeLanguage={setSelectedLanguage}
+            onChangeLanguage={updateSelectedLanguage}
             showTags={true}
             selectedCategories={selectedCategories}
             onToggleCategory={toggleCategory}
             isMobile={true}
             selectedDifficulty={selectedDifficulty}
-            onChangeDifficulty={setSelectedDifficulty}
+            onChangeDifficulty={updateSelectedDifficulty}
             selectedType={selectedType}
-            onChangeType={setSelectedType}
+            onChangeType={updateSelectedType}
             selectedFramework={selectedFramework}
-            onChangeFramework={setSelectedFramework}
+            onChangeFramework={updateSelectedFramework}
             selectedLastActivity={selectedLastActivity}
-            onChangeLastActivity={setSelectedLastActivity}
+            onChangeLastActivity={updateSelectedLastActivity}
+            selectedLocation={selectedLocation}
+            onChangeLocation={updateLocation}
           />
         </div>
       )}
@@ -122,21 +138,28 @@ const SearchResultsPage: React.FC = () => {
             selectedLabels={selectedLabels}
             onToggleLabel={toggleLabel}
             selectedLanguage={selectedLanguage}
-            onChangeLanguage={setSelectedLanguage}
+            onChangeLanguage={updateSelectedLanguage}
             selectedCategories={selectedCategories}
             onToggleCategory={toggleCategory}
             selectedDifficulty={selectedDifficulty}
-            onChangeDifficulty={setSelectedDifficulty}
+            onChangeDifficulty={updateSelectedDifficulty}
             selectedType={selectedType}
-            onChangeType={setSelectedType}
+            onChangeType={updateSelectedType}
             selectedFramework={selectedFramework}
-            onChangeFramework={setSelectedFramework}
+            onChangeFramework={updateSelectedFramework}
             selectedLastActivity={selectedLastActivity}
-            onChangeLastActivity={setSelectedLastActivity}
+            onChangeLastActivity={updateSelectedLastActivity}
+            selectedLocation={selectedLocation}
+            onChangeLocation={updateLocation}
           />
         </div>
         <div className="md:col-span-9">
-          <IssueList className="rounded-md" query={query} />
+          <IssueList 
+            className="rounded-md" 
+            query={query}
+            naturalLanguageFilter={selectedNaturalLanguages}
+            locationFilter={selectedLocation}
+          />
         </div>
       </div>
     </main>
