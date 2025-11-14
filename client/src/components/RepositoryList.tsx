@@ -89,10 +89,10 @@ const RepositoryList: React.FC<RepositoryListProps> = ({ className = '', languag
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              {isSearchMode ? 'Repository search' : 'Curated repositories'}
+              {isSearchMode ? 'Repository search' : 'Browse repositories'}
             </p>
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-              {isSearchMode ? `Search results${searchResults.length > 0 ? ` (${searchResults.length})` : ''}` : 'Build with the right projects'}
+              {isSearchMode ? `Search results${searchResults.length > 0 ? ` (${searchResults.length})` : ''}` : 'Discover open-source projects'}
             </h2>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
@@ -140,10 +140,10 @@ const RepositoryList: React.FC<RepositoryListProps> = ({ className = '', languag
               )}
             </svg>
             <h3 className="mt-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
-              {isSearchMode ? 'No repositories match your search' : 'No repositories found'}
+              {isSearchMode ? 'No repositories found' : 'No repositories found'}
             </h3>
             <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              {isSearchMode ? 'Try a different repository name or keyword.' : 'Adjust the filters or pick another language to explore.'}
+              {isSearchMode ? 'Try searching with a different name or keyword.' : 'Change your filters or try a different programming language.'}
             </p>
           </div>
         )}
