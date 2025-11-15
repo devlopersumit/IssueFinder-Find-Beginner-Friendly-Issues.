@@ -58,8 +58,6 @@ export function useFetchIssues(query: string, page: number = 1, perPage: number 
         })
 
         if (!response.ok) {
-          const errorText = await response.text()
-          
           // Handle rate limiting (403) with better error message
           if (response.status === 403) {
             const rateLimitRemaining = response.headers.get('X-RateLimit-Remaining')
